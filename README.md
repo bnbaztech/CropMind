@@ -22,7 +22,7 @@ CropMind aims to reduce crop losses, improve food security, and make agricultura
 
 ## 🚀 Live Demo
 
-🌐 **Application:** https://YOUR-RENDER-LINK.onrender.com
+🌐 **Application:** (https://cropmind-5vt5.onrender.com)
 
 ---
 
