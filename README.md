@@ -241,8 +241,7 @@ GitHub:
 https://github.com/bnbaztech
 
 LinkedIn:
-(Add your LinkedIn URL)
-
+(https://www.linkedin.com/in/abdullahi-bnbaz)
 ---
 
 # 🙏 Acknowledgements
