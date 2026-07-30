@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Lora:ital,wght@0,400..700;1,400..700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Lora", Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-serif: "Lora", Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+body {
+  background-color: #F4F6F0; /* Clean, crisp, high-contrast organic natural off-white */
+  background-image: 
+    /* Subtly textured grid representing crop rows & field coordinates */
+    linear-gradient(to right, rgba(14, 35, 19, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(14, 35, 19, 0.03) 1px, transparent 1px),
+    /* Topographic layout contour lines representing agricultural terrace farming */
+    radial-gradient(circle at 20% 30%, transparent 120px, rgba(14, 35, 19, 0.015) 121px, rgba(14, 35, 19, 0.015) 122px, transparent 123px),
+    radial-gradient(circle at 80% 70%, transparent 180px, rgba(14, 35, 19, 0.015) 181px, rgba(14, 35, 19, 0.015) 182px, transparent 183px),
+    radial-gradient(circle at 50% 120%, transparent 240px, rgba(14, 35, 19, 0.015) 241px, rgba(14, 35, 19, 0.015) 242px, transparent 243px),
+    /* Soft warm ambient soil undertones */
+    radial-gradient(circle at 0% 0%, rgba(220, 225, 215, 0.5) 0%, transparent 60%),
+    radial-gradient(circle at 100% 100%, rgba(200, 215, 205, 0.4) 0%, transparent 60%);
+  background-size: 32px 32px, 32px 32px, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+  color: #0E2313; /* Rich organic deep dark forest green with crisp contrast */
+  font-family: var(--font-sans);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark body {
+  background-color: #070D09; /* Rich dark organic charcoal/soil base */
+  background-image: 
+    /* Subtly textured grid for dark mode */
+    linear-gradient(to right, rgba(16, 185, 129, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(16, 185, 129, 0.02) 1px, transparent 1px),
+    /* Topographic layout contour lines for dark mode */
+    radial-gradient(circle at 20% 30%, transparent 120px, rgba(16, 185, 129, 0.015) 121px, rgba(16, 185, 129, 0.015) 122px, transparent 123px),
+    radial-gradient(circle at 80% 70%, transparent 180px, rgba(16, 185, 129, 0.015) 181px, rgba(16, 185, 129, 0.015) 182px, transparent 183px),
+    radial-gradient(circle at 50% 120%, transparent 240px, rgba(16, 185, 129, 0.015) 241px, rgba(16, 185, 129, 0.015) 242px, transparent 243px),
+    /* Deep glowing ambient dark green undertones */
+    radial-gradient(circle at 0% 0%, rgba(74, 124, 89, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.05) 0%, transparent 55%);
+  background-size: 32px 32px, 32px 32px, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+  color: #E5EAE5; /* Elegant premium off-white text */
+}
+
+/* Custom visual radar sweeps for Sentinel GIS */
+@keyframes radar-sweep {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: radar-sweep 25s linear infinite;
+}
+
+.bg-radial-radar {
+  background: radial-gradient(circle, rgba(74, 124, 89, 0.15) 0%, rgba(245, 245, 240, 0.9) 70%);
+}
+
+.bg-gradient-radar {
+  background: conic-gradient(from 0deg, rgba(74, 124, 89, 0.12) 0deg, rgba(74, 124, 89, 0) 90deg);
+}
+
+.bg-radial-slide {
+  background: radial-gradient(circle, rgba(212, 140, 69, 0.08) 0%, rgba(245, 245, 240, 0) 80%);
+}
+
+/* Custom Scrollbars */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #FDFCF8;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #E5E2D9;
+  border-radius: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #4A7C59;
+}

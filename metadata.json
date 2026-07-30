@@ -1,0 +1,6 @@
+{
+  "name": "CropMind",
+  "description": "AI Agronomist for 500 Million Smallholder Farmers. Offline-first, multilingual crop diagnosis, weather prediction, and satellite monitoring simulator.",
+  "requestFramePermissions": ["camera", "microphone", "geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
