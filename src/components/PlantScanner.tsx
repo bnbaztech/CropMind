@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Camera, RefreshCw, CheckCircle, AlertTriangle, ShieldCheck, HeartPulse, Sparkles, HelpCircle, Upload, Video, VideoOff, AlertCircle } from 'lucide-react';
 import { DISEASE_PRESETS } from '../diseaseData';
 import { DiseasePreset } from '../types';
+import { GoogleGenAI, Type } from '@google/genai';
 import ErrorBoundary from './ErrorBoundary';
 
 interface PlantScannerProps {
@@ -188,47 +189,56 @@ export default function PlantScanner({ isOnline, language }: PlantScannerProps) 
       });
 
       if (!response.ok) {
-        throw new Error('API server diagnostic returned an error state.');
+        const errText = await response.text().catch(() => '');
+        throw new Error(`API server diagnostic returned ${response.status}: ${errText.slice(0, 200)}`);
       }
 
       const data = await response.json();
+      console.log('[PlantScanner] raw API response:', data); // TEMP: remove once confirmed working
+
       if (data.success) {
-        // The live model's JSON can occasionally omit a field or return the
-        // wrong type (e.g. "symptoms" as a string instead of an array).
-        // Normalize it into the exact shape the UI expects so a malformed
-        // response can never crash the render.
         const raw = Array.isArray(data.diagnosis)
-      ? data.diagnosis[0]
-      : data.diagnosis || {};
-        const safeDiagnosis: DiseasePreset = {
-          id: selectedPresetId,
-          name: typeof raw.name === 'string' ? raw.name : 'Unidentified Issue',
-          scientificName: typeof raw.scientificName === 'string' ? raw.scientificName : 'Unknown',
-          crop: typeof raw.crop === 'string' ? raw.crop : currentCrop,
-          confidence: typeof raw.confidence === 'number' ? raw.confidence : 85,
-          symptoms: Array.isArray(raw.symptoms) ? raw.symptoms : [],
-          organicTreatment: typeof raw.organicTreatment === 'string' ? raw.organicTreatment : 'No organic treatment data returned.',
-          chemicalTreatment: typeof raw.chemicalTreatment === 'string' ? raw.chemicalTreatment : 'No chemical treatment data returned.',
-          preventiveMeasures: Array.isArray(raw.preventiveMeasures) ? raw.preventiveMeasures : [],
-          imageUrl: selectedPreset?.imageUrl || '',
-        };
-        setReport(safeDiagnosis);
-        saveToFarmerHistory(safeDiagnosis);
-        setIsFallback(data.isFallback);
-        if (data.isFallback || data.warning) {
-          setScanWarning(data.warning || 'Displaying cached local model diagnosis.');
-        }
+            ? data.diagnosis[0]
+            : data.diagnosis;
+
+          if (!raw) {
+            throw new Error('API responded with success:true but data.diagnosis was empty/undefined.');
+          }
+
+          const safeDiagnosis: DiseasePreset = {
+            id: selectedPresetId,
+            crop: raw.crop || currentCrop,
+            name: raw.name || "Unknown Disease",
+            scientificName: raw.scientificName || "",
+            confidence: typeof raw.confidence === "number" ? raw.confidence : 70,
+            symptoms: Array.isArray(raw.symptoms) ? raw.symptoms : [],
+            organicTreatment: raw.organicTreatment || "No recommendation provided.",
+            chemicalTreatment: raw.chemicalTreatment || "No treatment provided.",
+            preventiveMeasures: Array.isArray(raw.preventiveMeasures) ? raw.preventiveMeasures : [],
+            imageUrl: selectedPreset?.imageUrl || "",
+          };
+
+          setReport(safeDiagnosis);
+          saveToFarmerHistory(safeDiagnosis);
+          setIsFallback(data.isFallback);
+
+          if (data.isFallback || data.warning) {
+            setScanWarning(
+              data.warning || "Displaying cached local model diagnosis."
+            );
+          }
+          
       } else {
         throw new Error(data.error || 'Diagnostic parsing failed.');
       }
 
     } catch (err: any) {
-      console.warn('Scan API failed, resorting to static agronomic database:', err);
+      console.error('[PlantScanner] Scan API failed, resorting to static agronomic database:', err);
       const localPreset = DISEASE_PRESETS.find(p => p.id === selectedPresetId) || DISEASE_PRESETS[0];
       setReport(localPreset);
       saveToFarmerHistory(localPreset);
       setIsFallback(true);
-      setScanWarning('Network Timeout: Retrieved expert agronomist diagnosis from offline local backup.');
+      setScanWarning(`Live scan failed (${err?.message || 'unknown error'}). Showing offline backup diagnosis.`);
     } finally {
       setIsScanning(false);
     }

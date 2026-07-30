@@ -491,6 +491,7 @@ app.get('/api/health', (req, res) => {
 
 // 2. Leaf Disease Diagnosis Scanner API
 app.post('/api/diagnose', async (req, res) => {
+  
   const { image, crop, diseaseId } = req.body;
 
   try {
@@ -657,7 +658,23 @@ The JSON must match the application's expected schema exactly.
         model: 'gemma-4-26b-a4b-it',
         contents: { parts: [imagePart, textPart] },
         config: {
-          responseMimeType: 'application/json',
+         responseSchema: {
+            type: 'OBJECT',
+            properties: {
+              name: { type: 'STRING' },
+              scientificName: { type: 'STRING' },
+              crop: { type: 'STRING' },
+              symptoms: { type: 'ARRAY', items: { type: 'STRING' } },
+              organicTreatment: { type: 'STRING' },
+              chemicalTreatment: { type: 'STRING' },
+              preventiveMeasures: { type: 'ARRAY', items: { type: 'STRING' } },
+              confidence: { type: 'NUMBER' },
+            },
+            required: [
+              'name', 'scientificName', 'crop', 'symptoms',
+              'organicTreatment', 'chemicalTreatment', 'preventiveMeasures', 'confidence',
+            ],
+          } as any,
         }
       });
 
