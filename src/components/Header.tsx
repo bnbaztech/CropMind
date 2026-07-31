@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Leaf, Wifi, WifiOff, Globe, BookOpen, User } from 'lucide-react';
 import { SupportedLanguage, Farmer } from '../types';
 
@@ -33,6 +33,19 @@ export default function Header({
   activeFarmer,
   onFarmerPortalClick,
 }: HeaderProps) {
+  const [isLangOpen, setIsLangOpen] = useState(false);
+  const langRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) {
+        setIsLangOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   return (
     <header className="border-b border-[#E5E2D9] bg-white sticky top-0 z-50 transition-colors duration-300 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -110,8 +123,11 @@ export default function Header({
           </div>
 
           {/* Multilingual Selector */}
-          <div className="relative group">
-            <div className="flex items-center space-x-2 bg-[#F5F5F0] hover:bg-[#E5E2D9] border border-[#E5E2D9] rounded-xl px-3 py-2 cursor-pointer transition-colors">
+          <div className="relative" ref={langRef}>
+            <div
+              onClick={() => setIsLangOpen((open) => !open)}
+              className="flex items-center space-x-2 bg-[#F5F5F0] hover:bg-[#E5E2D9] border border-[#E5E2D9] rounded-xl px-3 py-2 cursor-pointer transition-colors"
+            >
               <Globe className="w-4 h-4 text-[#5A5A40]" />
               <span className="text-xs text-[#2D3325] font-mono uppercase hidden sm:inline">
                 {currentLanguage}
@@ -120,28 +136,33 @@ export default function Header({
                 {LANGUAGES.find(l => l.code === currentLanguage)?.flag}
               </span>
             </div>
-            
-            {/* Hover Dropdown */}
-            <div className="absolute right-0 mt-2 w-48 bg-white border border-[#E5E2D9] rounded-xl shadow-2xl opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-200 z-50 py-1">
-              <div className="px-3 py-1 text-[10px] text-[#5A5A40] font-mono tracking-wider uppercase border-b border-[#E5E2D9]">
-                Select Language
+
+            {/* Click Dropdown */}
+            {isLangOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border border-[#E5E2D9] rounded-xl shadow-2xl z-50 py-1">
+                <div className="px-3 py-1 text-[10px] text-[#5A5A40] font-mono tracking-wider uppercase border-b border-[#E5E2D9]">
+                  Select Language
+                </div>
+                {LANGUAGES.map((lang) => (
+                  <button
+                    key={lang.code}
+                    onClick={() => {
+                      setLanguage(lang.code as SupportedLanguage);
+                      setIsLangOpen(false);
+                    }}
+                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-[#F5F5F0] transition-colors ${
+                      currentLanguage === lang.code ? 'text-[#4A7C59] font-semibold bg-[#4A7C59]/5' : 'text-[#2D3325]'
+                    }`}
+                  >
+                    <span className="flex items-center">
+                      <span className="mr-2 text-sm">{lang.flag}</span>
+                      <span>{lang.name}</span>
+                    </span>
+                    <span className="text-[10px] text-[#5A5A40] font-mono italic">{lang.local}</span>
+                  </button>
+                ))}
               </div>
-              {LANGUAGES.map((lang) => (
-                <button
-                  key={lang.code}
-                  onClick={() => setLanguage(lang.code as SupportedLanguage)}
-                  className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-[#F5F5F0] transition-colors ${
-                    currentLanguage === lang.code ? 'text-[#4A7C59] font-semibold bg-[#4A7C59]/5' : 'text-[#2D3325]'
-                  }`}
-                >
-                  <span className="flex items-center">
-                    <span className="mr-2 text-sm">{lang.flag}</span>
-                    <span>{lang.name}</span>
-                  </span>
-                  <span className="text-[10px] text-[#5A5A40] font-mono italic">{lang.local}</span>
-                </button>
-              ))}
-            </div>
+            )}
           </div>
 
         </div>

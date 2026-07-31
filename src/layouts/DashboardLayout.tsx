@@ -45,6 +45,7 @@ export default function DashboardLayout() {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [notifDropdownOpen, setNotifDropdownOpen] = useState(false);
+  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
   // Sidebar Links config
@@ -226,22 +227,34 @@ export default function DashboardLayout() {
             </div>
 
             {/* Language Selector */}
-            <div className="relative group">
-              <button className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg border border-[#E5E2D9] dark:border-emerald-950 hover:bg-[#F5F5F0] dark:hover:bg-emerald-950/20 text-xs font-semibold cursor-pointer">
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setLangDropdownOpen(!langDropdownOpen);
+                  setNotifDropdownOpen(false);
+                  setUserDropdownOpen(false);
+                }}
+                className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg border border-[#E5E2D9] dark:border-emerald-950 hover:bg-[#F5F5F0] dark:hover:bg-emerald-950/20 text-xs font-semibold cursor-pointer"
+              >
                 <Globe className="w-3.5 h-3.5 text-[#4A7C59]" />
                 <span className="uppercase font-mono text-[10px]">{language}</span>
               </button>
-              <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-emerald-950 border border-stone-200 dark:border-emerald-900 rounded-lg shadow-xl opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-150 z-50 p-1">
-                {['en', 'sw', 'ha', 'yo', 'ig', 'fr', 'ar'].map((lang) => (
-                  <button
-                    key={lang}
-                    onClick={() => setLanguage(lang as any)}
-                    className="w-full text-left px-3 py-1.5 text-xs rounded hover:bg-stone-100 dark:hover:bg-emerald-900/40 transition-colors uppercase font-mono font-bold"
-                  >
-                    {lang}
-                  </button>
-                ))}
-              </div>
+              {langDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-emerald-950 border border-stone-200 dark:border-emerald-900 rounded-lg shadow-xl z-50 p-1">
+                  {['en', 'sw', 'ha', 'yo', 'ig', 'fr', 'ar'].map((lang) => (
+                    <button
+                      key={lang}
+                      onClick={() => {
+                        setLanguage(lang as any);
+                        setLangDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-3 py-1.5 text-xs rounded hover:bg-stone-100 dark:hover:bg-emerald-900/40 transition-colors uppercase font-mono font-bold"
+                    >
+                      {lang}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Day/Night Theme Toggle */}
